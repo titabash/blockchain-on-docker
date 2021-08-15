@@ -15,6 +15,9 @@
    Build Nuxs.js app<br>
    ```yarn create nuxt-app <project-name>```
 
+## View logs
+```docker logs <Container name> -f```
+
 ## Operation
 - hoge<br>
   ```fuga```

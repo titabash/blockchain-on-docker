@@ -1,6 +1,6 @@
 FROM node:alpine
 
-WORKDIR /app
+WORKDIR /applications
 
 # apkはalpineのパッケージマネージャ
 RUN apk update && \
@@ -12,7 +12,5 @@ ENV PATH $HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH
 # ホットリロード
 ENV CHOKIDAR_USEPOLLING=true
 RUN yarn global add @vue/cli
-
-EXPOSE 8080 3000
 
 CMD ["/bin/sh"]

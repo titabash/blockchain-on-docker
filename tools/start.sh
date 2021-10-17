@@ -1,6 +1,6 @@
 tmux kill-session -t $(basename `git rev-parse --show-toplevel`) > /dev/null 2>&1
 docker-compose up -d
-array=$(docker ps --format '{{.Names}}' --filter 'name=_fe')
+array=$(docker ps --format '{{.Names}}' --filter 'name=_bc')
 NUM=0
 for var in ${array[@]}
 do

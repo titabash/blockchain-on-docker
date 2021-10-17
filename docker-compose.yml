@@ -1,14 +1,39 @@
 version: '3.8'
 
 services:
-  app_fe:
-    container_name: app_fe
-    build: ./docker/web
-    ports:
-      - 3000:3000
-    privileged: true
+  truffle_bc:
+    build: ./docker/truffle
+    container_name: 'truffle_bc'
     volumes:
-      - ./applications:/applications:cached
-    tty: true
-    stdin_open: true
-    command: /bin/sh
+      - ./application:/usr/src/app/
+    command: >
+      /bin/sh -c '
+        while :; do sleep 10; done
+      '
+    ports:
+      - "8003:3000"
+    networks:
+      default:
+      blockchain-testnet:
+    depends_on:
+      - ganache_bc
+  ganache_bc:
+    container_name: 'ganache_bc'
+    env_file:
+      - ./env/local_ganache.env
+    build: ./docker/ganache
+    ports:
+      - "8545:8545"
+    networks:
+      default:
+      blockchain-testnet:
+        ipv4_address: 10.254.249.89
+    volumes:
+      - ./docker/ganache/data:/var/ganache
+
+networks:
+  blockchain-testnet:
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.254.249.0/24

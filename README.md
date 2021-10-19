@@ -18,6 +18,11 @@
 ## View logs
 ```docker logs <Container name> -f```
 
+## Brownie Sample Test
+```brownie bake token && cd token ```
+```brownie networks add Development dev cmd=ganache-cli host=http://10.254.249.5:8545```<br>
+```brownie test --network dev```
+
 ## Operation
 - hoge<br>
   ```fuga```

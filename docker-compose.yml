@@ -5,13 +5,29 @@ services:
     build: ./docker/truffle
     container_name: 'truffle_bc'
     volumes:
-      - ./application:/usr/src/app/
+      - ./applications/truffle:/usr/src/app/
     command: >
       /bin/sh -c '
         while :; do sleep 10; done
       '
     ports:
       - "8003:3000"
+    networks:
+      default:
+      blockchain-testnet:
+    depends_on:
+      - ganache_bc
+  brownie_bc:
+    build: ./docker/brownie
+    container_name: 'brownie_bc'
+    volumes:
+      - ./applications/brownie:/usr/src/app/
+    command: >
+      /bin/sh -c '
+        while :; do sleep 10; done
+      '
+    ports:
+      - "8004:3000"
     networks:
       default:
       blockchain-testnet:
@@ -27,7 +43,7 @@ services:
     networks:
       default:
       blockchain-testnet:
-        ipv4_address: 10.254.249.89
+        ipv4_address: 10.254.249.5
     volumes:
       - ./docker/ganache/data:/var/ganache
 
@@ -36,4 +52,4 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: 10.254.249.0/24
+        - subnet: 10.254.249.0/16

@@ -20,8 +20,14 @@
 
 ## Brownie Sample Test
 ```brownie bake token && cd token ```
-```brownie networks add Development dev cmd=ganache-cli host=http://10.254.249.5:8545```<br>
+```brownie networks add Development dev2 cmd=ganache-cli host=http://10.254.249.5:8545```<br>
 ```brownie test --network dev```
+
+## Truffle Sample Test
+```truffle init ```
+```truffle console```<br>
+```truffle(development)> let helloWorld = await HelloWorld.deployed()```<br>
+```truffle(development)> helloWorld.say()```<br>
 
 ## Operation
 - hoge<br>

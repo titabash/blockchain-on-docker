@@ -8,6 +8,7 @@ services:
       - ./applications/truffle:/usr/src/app/
     command: >
       /bin/sh -c '
+        npm install -E @openzeppelin/contracts
         while :; do sleep 10; done
       '
     ports:

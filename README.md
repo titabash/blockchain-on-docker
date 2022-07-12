@@ -25,6 +25,7 @@
 
 ## Truffle Sample Test
 ```truffle init ```
+```truffle migrate```<br>
 ```truffle console```<br>
 ```truffle(development)> let helloWorld = await HelloWorld.deployed()```<br>
 ```truffle(development)> helloWorld.say()```<br>

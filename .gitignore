@@ -23,9 +23,9 @@ yarn-error.log*
 /env/*
 !local.env.example
 
-docker/databases/mongo/data/configdb/*
-docker/databases/mongo/data/db/*
-docker/databases/redis/data/*
+docker/ipfs/data/*
+docker/ipfs/contents/*
+docker/ganache/data/*
 applications/brownie/*
 applications/truffle/*
 !.gitkeep

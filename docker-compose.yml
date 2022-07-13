@@ -40,13 +40,39 @@ services:
       - ./env/local_ganache.env
     build: ./docker/ganache
     ports:
-      - "8545:8545"
+      - '8545:8545'
     networks:
       default:
       blockchain-testnet:
         ipv4_address: 10.254.249.5
     volumes:
       - ./docker/ganache/data:/var/ganache
+  ipfs_bc:
+    container_name: 'ipfs_bc'
+    build: ./docker/ipfs
+    ports:
+      - '4001:4001'
+      - '8005:8080'
+      - '5001:5001'
+    networks:
+      default:
+      blockchain-testnet:
+        ipv4_address: 10.254.249.6
+    volumes:
+      - ./docker/ipfs/data:/data/ipfs
+      - ./docker/ipfs/contents:/export
+  json_server_bc:
+    container_name: 'json_server_bc'
+    build: ./docker/json_server
+    ports:
+      - '8006:8080'
+    networks:
+      default:
+      blockchain-testnet:
+        ipv4_address: 10.254.249.7
+    volumes:
+      - ./applications/json_server:/app
+    command:  /bin/sh -c 'python index.py'
 
 networks:
   blockchain-testnet:

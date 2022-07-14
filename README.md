@@ -36,7 +36,7 @@
 
 3. Initialize instance.
 
-   ```truffle(development)> let textNFT = await NFT.deployed()```
+   ```truffle(development)> let textNFT = await NFT.new()```
 
 4. Mint NFT.
 

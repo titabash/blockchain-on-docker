@@ -24,8 +24,6 @@ yarn-error.log*
 !local.env.example
 
 docker/ipfs/data/*
-docker/ipfs/contents/*
 docker/ganache/data/*
 applications/brownie/*
-applications/truffle/*
 !.gitkeep

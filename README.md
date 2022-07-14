@@ -1,7 +1,7 @@
-# vue-on-docker
+# Blockchain-on-docker
 
 ## Install
-1. Install docker, docker-compose
+1. Install docker, docker-compose, tmux
 
 ## How to build
 1. Enter the project root<br>

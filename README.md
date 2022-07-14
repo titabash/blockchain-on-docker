@@ -1,29 +1,46 @@
 # Blockchain-on-docker
 
 ## Install
+
 1. Install docker, docker-compose, tmux
 
 ## How to build
-1. Enter the project root<br>
+
+1. Enter the project root
+
    ```cd <project directory>```
-2. Build project<br>
+2. Build project
+
    ```make start```
 
 ## View logs
+
 ```docker logs <Container name> -f```
 
-## Brownie Sample Test
-```brownie bake token && cd token ```<br>
-```brownie networks add Development dev2 cmd=ganache-cli host=http://10.254.249.5:8545```<br>
-```brownie test --network dev```
+## Truffle Sample NFT
 
-## Truffle Sample Test
-```truffle init ```<br>
-```truffle migrate```<br>
-```truffle console```<br>
-```truffle(development)> let helloWorld = await HelloWorld.deployed()```<br>
-```truffle(development)> helloWorld.say()```<br>
+1. Deploy your script.
+
+   ```truffle migrate```
+
+2. Open truffle console.
+
+   ```truffle console```
+
+3. Initialize instance.
+
+   ```truffle(development)> let textNFT = await NFT.deployed()```
+
+4. Mint NFT.
+
+   ```truffle(development)> textNFT.mint('<wallet address on ganache>')```
+
+5. Confirm owner wallet address.
+
+   ```truffle(development)> textNFT.ownerOf(0)```
 
 ## Operation
-- hoge<br>
+
+- hoge
+
   ```fuga```

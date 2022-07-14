@@ -17,7 +17,14 @@
 
 ```docker logs <Container name> -f```
 
-## Truffle Sample NFT
+## IPFS(Use ipsf_bc session)
+
+1. Add sample contents on IPFS node.
+
+   ```ipfs add -r export/images```
+
+
+## Truffle Sample NFT(Use truffle_bc session)
 
 1. Deploy your script.
 

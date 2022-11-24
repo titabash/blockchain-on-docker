@@ -23,6 +23,8 @@ yarn-error.log*
 /env/*
 !local.env.example
 
+applications/hardhat/cache
+applications/hardhat/artifacts
 docker/ipfs/data/*
 docker/ipfs/contents/*
 docker/ganache/data/*

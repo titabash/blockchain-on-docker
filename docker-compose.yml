@@ -1,39 +1,55 @@
 version: '3.8'
 
 services:
-  truffle_bc:
-    build: ./docker/truffle
-    container_name: 'truffle_bc'
+  # truffle_bc:
+  #   build: ./docker/truffle
+  #   container_name: 'truffle_bc'
+  #   volumes:
+  #     - ./applications/truffle:/usr/src/app/
+  #   command: >
+  #     /bin/sh -c '
+  #       npm install -E @openzeppelin/contracts
+  #       while :; do sleep 10; done
+  #     '
+  #   ports:
+  #     - "8003:3000"
+  #   networks:
+  #     default:
+  #     blockchain-testnet:
+  #   depends_on:
+  #     - ganache_bc
+  hardhat_bc:
+    build: ./docker/hardhat
+    container_name: 'hardhat_bc'
     volumes:
-      - ./applications/truffle:/usr/src/app/
+      - ./applications/hardhat:/usr/src/app/
     command: >
       /bin/sh -c '
-        npm install -E @openzeppelin/contracts
         while :; do sleep 10; done
       '
     ports:
-      - "8003:3000"
+      - "8007:3000"
     networks:
       default:
       blockchain-testnet:
     depends_on:
       - ganache_bc
-  brownie_bc:
-    build: ./docker/brownie
-    container_name: 'brownie_bc'
-    volumes:
-      - ./applications/brownie:/usr/src/app/
-    command: >
-      /bin/sh -c '
-        while :; do sleep 10; done
-      '
-    ports:
-      - "8004:3000"
-    networks:
-      default:
-      blockchain-testnet:
-    depends_on:
-      - ganache_bc
+  # brownie_bc:
+  #   build: ./docker/brownie
+  #   container_name: 'brownie_bc'
+  #   volumes:
+  #     - ./applications/brownie:/usr/src/app/
+  #   command: >
+  #     /bin/sh -c '
+  #       while :; do sleep 10; done
+  #     '
+  #   ports:
+  #     - "8004:3000"
+  #   networks:
+  #     default:
+  #     blockchain-testnet:
+  #   depends_on:
+  #     - ganache_bc
   ganache_bc:
     container_name: 'ganache_bc'
     env_file:

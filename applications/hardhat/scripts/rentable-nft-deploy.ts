@@ -3,13 +3,13 @@ import { ethers } from "hardhat";
 async function main() {
 
 
-  const token_name = "Test"
-  const token_symbol = "TEST"
+  const token_name = "TestAxie"
+  const token_symbol = "TAX"
 
   // Contracts are deployed using the first signer/account by default
   const [owner, otherAccount] = await ethers.getSigners();
 
-  const Rental = await ethers.getContractFactory("ERC4907");
+  const Rental = await ethers.getContractFactory("TestAxie");
   const rental = await Rental.deploy(token_name, token_symbol);
 
   console.log(`Rentable NFT deployed to ${rental.address}`);

@@ -10,13 +10,13 @@ describe("ERC4907", function () {
   // We use loadFixture to run this setup once, snapshot that state,
   // and reset Hardhat Network to that snapshot in every test.
   async function deployRentableNFTFixture() {
-    const token_name = "Test"
-    const token_symbol = "TEST"
+    const token_name = "TestAxie"
+    const token_symbol = "TAX"
 
     // Contracts are deployed using the first signer/account by default
     const [owner, addr1, addr2] = await ethers.getSigners();
 
-    const Rental = await ethers.getContractFactory("ERC4907");
+    const Rental = await ethers.getContractFactory("TestAxie");
     const rental = await Rental.deploy(token_name, token_symbol);
 
     return { rental, owner, addr1, addr2};
@@ -41,9 +41,12 @@ describe("ERC4907", function () {
     it("Rental NFT", async function () {
       const { rental, owner, addr1 } = await loadFixture(deployRentableNFTFixture);
       await rental.mint(1)
+      await rental.setRentalFee(0, ethers.utils.parseEther("1000"))
       let date = new Date() ;
       let expireTime = date.getTime() + 10000;
-      await rental.setUser(0, addr1.address, expireTime)
+      console.log(await ethers.utils.formatEther(await ethers.provider.getBalance(owner.address)));
+      await rental.setScholar(0, addr1.address, expireTime, 10, { value: ethers.utils.parseEther("1000") })
+      console.log(await ethers.utils.formatEther(await ethers.provider.getBalance(owner.address)));
       expect(await rental.ownerOf(0)).to.equal(owner.address);
       expect(await rental.userOf(0)).to.equal(addr1.address);
     });
@@ -51,12 +54,13 @@ describe("ERC4907", function () {
     it("Restrict transfer", async function () {
       const { rental, owner, addr1, addr2} = await loadFixture(deployRentableNFTFixture);
       await rental.mint(1)
+      await rental.setRentalFee(0, ethers.utils.parseEther("1000"))
       let date = new Date();
       console.log(date.getTime())
       date.setSeconds(date.getSeconds() + 10);
       console.log(date.getTime())
 
-      await rental.setUser(0, addr1.address, date.getTime())
+      await rental.setScholar(0, addr1.address, date.getTime(), 10)
       expect(await rental.ownerOf(0)).to.equal(owner.address);
       expect(await rental.userOf(0)).to.equal(addr1.address);
 

@@ -1,44 +1,20 @@
 // SPDX-License-Identifier: CC0-1.0
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "./IERC4907.sol";
 
-contract ERC4907 is ERC721, IERC4907, ERC721Enumerable, Ownable {
+contract ERC4907 is ERC721, IERC4907 {
     struct UserInfo {
         address user; // address of user role
         uint64 expires; // unix timestamp, user expires
-        uint64 royalty;
     }
 
     mapping(uint256 => UserInfo) internal _users;
 
-    uint256 public constant MAX_SUPPLY = 10;
-    uint256 public constant MAX_MINT_PER_TRANSACTION = 5;
-
-    address public owner;
-
     constructor(string memory name_, string memory symbol_)
         ERC721(name_, symbol_)
-    {
-        owner = msg.sender;
-    }
-
-    // mint時のロジック
-    function mint(uint256 numberOfTokens) public payable {
-        uint256 ts = totalSupply();
-        require(
-            numberOfTokens <= MAX_MINT_PER_TRANSACTION,
-            "Exceeded max token per transaction"
-        );
-        require(ts + numberOfTokens <= MAX_SUPPLY, "Exceed max tokens");
-
-        for (uint256 i = 0; i < numberOfTokens; i++) {
-            _safeMint(msg.sender, ts + i);
-        }
-    }
+    {}
 
     /// @notice set the user and expires of a NFT
     /// @dev The zero address indicates there is no user
@@ -90,7 +66,7 @@ contract ERC4907 is ERC721, IERC4907, ERC721Enumerable, Ownable {
         public
         view
         virtual
-        override(ERC721, ERC721Enumerable)
+        override
         returns (bool)
     {
         return
@@ -102,20 +78,13 @@ contract ERC4907 is ERC721, IERC4907, ERC721Enumerable, Ownable {
         address from,
         address to,
         uint256 tokenId,
-        uint256 amount
-    ) internal override(ERC721, ERC721Enumerable) {
-        super._beforeTokenTransfer(from, to, tokenId, amount);
+        uint256 batchSize
+    ) internal virtual override {
+        super._beforeTokenTransfer(from, to, tokenId, batchSize);
 
-        // if (from != to && _users[tokenId].user != address(0)) {
-        //     delete _users[tokenId];
-        //     emit UpdateUser(tokenId, address(0), 0);
-        // }
-        require(uint256(_users[tokenId].expires) < block.timestamp);
-    }
-
-    // Payコントラクトアドレスから_toアドレスに_amount分のetherを送金する関数
-    function withdraw(address payable _to, uint256 _amount) public {
-        (bool success, ) = _to.call{value: _amount}("");
-        require(success, "Failed to send Ether");
+        if (from != to && _users[tokenId].user != address(0)) {
+            delete _users[tokenId];
+            emit UpdateUser(tokenId, address(0), 0);
+        }
     }
 }

@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: CC0-1.0
 pragma solidity ^0.8.9;
 
-// import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "./ERC4907.sol";
 
 contract TestAxie is ERC4907, ERC721Enumerable, Ownable {
+    // レンタル料とスカラーの報酬割合
     struct ScholarInfo {
         uint256 fee;
         uint256 ratio;
@@ -16,30 +16,20 @@ contract TestAxie is ERC4907, ERC721Enumerable, Ownable {
 
     mapping(uint256 => ScholarInfo) internal _scholars;
 
-    uint256 public constant MAX_SUPPLY = 10;
-    uint256 public constant MAX_MINT_PER_TRANSACTION = 5;
-
     constructor(string memory name_, string memory symbol_)
         ERC4907(name_, symbol_)
     {}
 
-    // mint時のロジック
-    function mint(uint256 numberOfTokens) public {
+    // mint時にレンタル料の初期値を設定する
+    function mint() public {
         uint256 ts = totalSupply();
-        require(
-            numberOfTokens <= MAX_MINT_PER_TRANSACTION,
-            "Exceeded max token per transaction"
-        );
-        require(ts + numberOfTokens <= MAX_SUPPLY, "Exceed max tokens");
-
-        for (uint256 i = 0; i < numberOfTokens; i++) {
-            _safeMint(msg.sender, ts + i);
-            ScholarInfo storage scholarInfo = _scholars[i];
-            scholarInfo.fee = 0;
-            emit UpdateScholar(0, 0);
-        }
+        _safeMint(msg.sender, ts);
+        ScholarInfo storage scholarInfo = _scholars[ts];
+        scholarInfo.fee = 0;
+        emit UpdateScholar(0, 0);
     }
 
+    // setUserはコントラクトのコントラクトプロバイダーのみ利用可能
     function setUser(
         uint256 tokenId,
         address user,
@@ -48,36 +38,36 @@ contract TestAxie is ERC4907, ERC721Enumerable, Ownable {
         super.setUser(tokenId, user, expires);
     }
 
+    // スカラーを設定。スカラー希望者からレンタルのオファーがあった場合はレンタル料をNFT保持者に支払う。
     function setScholar(
         uint256 tokenId,
         address scholar,
         uint64 expires,
         uint64 ratio
     ) public payable {
-        require(
-            _isApprovedOrOwner(msg.sender, tokenId),
-            "ERC721: transfer caller is not owner nor approved"
-        );
+        // スカラー希望者かNFT保持者のみ実行可能
+        require(msg.sender == scholar || msg.sender == ownerOf(tokenId));
+
         ScholarInfo storage scholarInfo = _scholars[tokenId];
+
+        // スカラー希望者の場合はレンタルフィーを支払う。
         if (msg.sender == scholar) {
             require(scholarInfo.fee == msg.value);
             address payable manager = payable(ownerOf(tokenId));
             manager.transfer(msg.value);
         }
+
+        // スカラー情報の設定
         UserInfo storage userInfo = _users[tokenId];
         userInfo.user = scholar;
         userInfo.expires = expires;
         emit UpdateUser(tokenId, scholar, expires);
-
         scholarInfo.ratio = ratio;
         emit UpdateScholar(scholarInfo.fee, ratio);
     }
 
+    // レンタル料金の設定
     function setRentalFee(uint256 tokenId, uint256 fee) public {
-        require(
-            _isApprovedOrOwner(msg.sender, tokenId),
-            "ERC721: transfer caller is not owner nor approved"
-        );
         require(msg.sender == ownerOf(tokenId));
         ScholarInfo storage scholarInfo = _scholars[tokenId];
         scholarInfo.fee = fee;
@@ -98,6 +88,7 @@ contract TestAxie is ERC4907, ERC721Enumerable, Ownable {
             super.supportsInterface(interfaceId);
     }
 
+    // レンタル期間中はNFTの移動を制限する
     function _beforeTokenTransfer(
         address from,
         address to,
@@ -107,6 +98,7 @@ contract TestAxie is ERC4907, ERC721Enumerable, Ownable {
         require(uint256(_users[tokenId].expires) < block.timestamp);
     }
 
+    // ゲームに勝利した場合の報酬。スカラーが勝利した場合は報酬の一部をスカラーが入手できる。
     function win(uint256 tokenId) public payable onlyOwner {
         UserInfo storage userInfo = _users[tokenId];
         ScholarInfo storage scholarInfo = _scholars[tokenId];
@@ -114,7 +106,7 @@ contract TestAxie is ERC4907, ERC721Enumerable, Ownable {
         uint256 profits = msg.value;
         uint256 reward = 0;
         if (userInfo.user != address(0)) {
-            reward = profits * scholarInfo.ratio;
+            reward = profits / scholarInfo.ratio;
             payable(userInfo.user).transfer(reward);
         }
         profits = profits - reward;

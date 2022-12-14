@@ -106,7 +106,7 @@ contract TestAxie is ERC4907, ERC721Enumerable, Ownable {
         uint256 profits = msg.value;
         uint256 reward = 0;
         if (userInfo.user != address(0)) {
-            reward = profits / scholarInfo.ratio;
+            reward = (profits * scholarInfo.ratio) / 100;
             payable(userInfo.user).transfer(reward);
         }
         profits = profits - reward;
